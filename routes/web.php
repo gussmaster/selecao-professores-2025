@@ -1,0 +1,33 @@
+<?php
+
+use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\InscricaoController;
+use Illuminate\Support\Facades\Auth;
+
+Route::get('/', [InscricaoController::class, 'verificarCPF'])->name('verificar.cpf');
+
+Route::post('/verificar', [InscricaoController::class, 'checarCPF'])->name('checar.cpf');
+
+Route::get('/formulario/{cpf}', [InscricaoController::class, 'formulario'])->name('formulario.inscricao');
+
+Route::post('/confirmar', [InscricaoController::class, 'confirmar'])->name('formulario.confirmar');
+
+Route::get('/comprovante/{id}', [InscricaoController::class, 'comprovante'])->name('comprovante.inscricao');
+
+Route::get('/comprovante/{id}/pdf', [InscricaoController::class, 'gerarPDF'])->name('comprovante.pdf');
+
+Route::get('/validar', [InscricaoController::class, 'validarHashForm'])->name('validar.form');
+
+Route::post('/validar', [InscricaoController::class, 'validarHashResultado'])->name('validar.resultado');
+
+Route::get('/exportar-inscricoes', [InscricaoController::class, 'exportarCSV'])->name('exportar.csv');
+
+Route::get('/login', [InscricaoController::class, 'loginForm'])->name('login');
+Route::post('/login', [InscricaoController::class, 'login'])->name('login.submit');
+Route::post('/logout', [InscricaoController::class, 'logout'])->name('logout');
+
+// Agrupando rotas protegidas
+Route::middleware(['auth'])->group(function () {
+    Route::get('/painel', [InscricaoController::class, 'painel'])->name('painel');
+    Route::get('/exportar-inscricoes', [InscricaoController::class, 'exportarCSV'])->name('exportar.csv');
+});
