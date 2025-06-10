@@ -43,6 +43,38 @@ public function loginForm()
     return view('login');
 }
 
+//FUNÇÃO DOWNLOAD PRIVADO
+public function downloadPrivado($tipo, $id)
+{
+    $inscricao = DB::table('inscricoes')->find($id);
+
+    if (!$inscricao) {
+        abort(404, 'Inscrição não encontrada.');
+    }
+
+    if ($tipo === 'documento') {
+        $path = $inscricao->documentos_path;
+    } elseif ($tipo === 'funcao') {
+        $path = $inscricao->funcao_path;
+    } else {
+        abort(404, 'Tipo inválido.');
+    }
+
+    $fullPath = storage_path('app/private/' . $path);
+
+    if (!file_exists($fullPath)) {
+        abort(404, 'Arquivo não encontrado: ' . $fullPath);
+    }
+
+    return response()->file($fullPath, [
+        'Content-Type' => 'application/pdf',
+        'Content-Disposition' => 'inline; filename="' . basename($fullPath) . '"',
+    ]);
+}
+
+
+//FIM DA  FUNÇÃO DE DOWNLOAD PRIVADO
+
 public function login(Request $request)
 {
     $credentials = $request->only('email', 'password');
@@ -195,8 +227,8 @@ public function painel(Request $request)
     $hash = hash('sha256', $request->cpf . now());
 
     // Salva os arquivos
-    $docPath = $request->file('documentos')->store("public/documentos");
-    $funcPath = $request->file('funcao')->store("public/funcoes");
+    $docPath = $request->file('documentos')->store("documentos", 'private');
+    $funcPath = $request->file('funcao')->store("funcoes", 'private');
 
     // Salva no banco
     $id = DB::table('inscricoes')->insertGetId([
