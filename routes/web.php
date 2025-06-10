@@ -24,4 +24,8 @@ Route::prefix('admin')->middleware(['auth'])->group(function () {
     Route::get('/painel', [InscricaoController::class, 'painel'])->name('painel');
     Route::get('/exportar-inscricoes', [InscricaoController::class, 'exportarCSV'])->name('exportar.csv');
     Route::get('/download/{tipo}/{id}', [InscricaoController::class, 'downloadPrivado'])->name('admin.download');
+    Route::get('/relatorio', [InscricaoController::class, 'relatorio'])->name('relatorio');
+    Route::get('/pontuacao', [InscricaoController::class, 'buscarCPF'])->name('pontuacao.buscar');
+    Route::post('/pontuacao', [InscricaoController::class, 'salvarPontuacao'])->name('pontuacao.salvar');
+
 });

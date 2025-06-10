@@ -6,9 +6,10 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
 </head>
 <body class="bg-light">
-    <div class="text-center my-4">
-        <img src="{{ asset('/images/logo-sme.png') }}" alt="Logo SME Caucaia" style="max-width: 300px;">
-    </div>
+	<div class="text-center my-4">
+       		 <img src="{{ asset('/images/logo-sme.png') }}" alt="Logo SME Caucaia" style="max-width: 300px;">
+   	 </div>
+
     <div class="container mt-5">
         <div class="card p-4 shadow">
             <h3 class="mb-3">Comprovante de Inscrição</h3>

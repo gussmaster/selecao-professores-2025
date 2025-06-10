@@ -11,7 +11,7 @@
 </head>
 <body>
     <div class="text-center my-4">
-        <img src="{{ asset('/images/logo-sme.png') }}" alt="Logo SME Caucaia" style="max-width: 300px;">
+      	<img src="{{ public_path('images/logo-sme.png') }}" alt="" style="max-width: 300px;">
     </div>
     <h2>Comprovante de Inscrição</h2>
     <div class="box">

@@ -37,6 +37,41 @@ class InscricaoController extends Controller
 
 //fim validacao cpf
 
+//funcao buscarcpf - pontuação
+
+public function buscarCPF(Request $request)
+{
+    $inscricao = null;
+
+    if ($request->filled('cpf')) {
+        $inscricao = DB::table('inscricoes')->where('cpf', $request->cpf)->first();
+    }
+
+    return view('pontuacao', compact('inscricao'));
+}
+
+//fim funcao buscar vpf - pontuação
+
+//funcao salvar pontuação
+
+public function salvarPontuacao(Request $request)
+{
+    $request->validate([
+        'id' => 'required|exists:inscricoes,id',
+        'pontuacao' => 'required|integer|min:0|max:1000',
+    ]);
+
+    DB::table('inscricoes')->where('id', $request->id)->update([
+        'pontuacao' => $request->pontuacao,
+        'updated_at' => now()
+    ]);
+
+    return redirect()->route('pontuacao.buscar')->with('success', 'Pontuação salva com sucesso.');
+}
+
+//fim funcao salvar pontuação
+
+
 //login
 public function loginForm()
 {
@@ -117,23 +152,37 @@ public function painel(Request $request)
 
     $cargos = DB::table('inscricoes')->select('cargo')->distinct()->pluck('cargo');
 
-    return view('painel', compact('inscricoes', 'cargos'));
+    $totalInscritos = DB::table('inscricoes')->count();
+
+
+    //return view('painel', compact('inscricoes', 'cargos'));
+    return view('painel', [
+   	'inscricoes' => $inscricoes,
+    	'cargos' => $cargos,
+    	'totalInscritos' => $totalInscritos,
+]);
+
 }
 //fim painel
 
-    public function exportarCSV()
+//FUNCAO EXPORTA CSV
+public function exportarCSV()
 {
     $inscricoes = DB::table('inscricoes')->get();
 
+    // Define headers com UTF-8
+    header('Content-Type: text/csv; charset=UTF-8');
+    header('Content-Disposition: attachment; filename="inscricoes.csv"');
+
     $csv = fopen('php://output', 'w');
+
+    // 👇 Esta linha adiciona o BOM para que o Excel reconheça UTF-8
+    fprintf($csv, chr(0xEF).chr(0xBB).chr(0xBF));
 
     $header = [
         'ID', 'Nome Completo', 'CPF', 'E-mail', 'Telefone', 'PCD', 'Descrição PCD',
         'Cargo', 'Número Inscrição', 'Hash', 'Data'
     ];
-
-    header('Content-Type: text/csv');
-    header('Content-Disposition: attachment; filename="inscricoes.csv"');
 
     fputcsv($csv, $header);
 
@@ -156,6 +205,9 @@ public function painel(Request $request)
     fclose($csv);
     exit;
 }
+
+
+//FIM FUNCAO EXPORTA CSV
 
     // Tela de verificação de CPF
     public function verificarCPF()
@@ -276,6 +328,29 @@ public function validarHashForm()
 {
     return view('validar');
 }
+
+//REALTORIO DETALHADO
+public function relatorio()
+{
+    $total = DB::table('inscricoes')->count();
+
+    $porCargo = DB::table('inscricoes')
+        ->select('cargo', DB::raw('count(*) as total'))
+        ->groupBy('cargo')
+        ->orderBy('total', 'desc')
+        ->get();
+
+    $pcdSim = DB::table('inscricoes')->where('pcd', 1)->count();
+    $pcdNao = DB::table('inscricoes')->where('pcd', 0)->count();
+
+    $hoje = DB::table('inscricoes')
+        ->whereDate('created_at', now()->toDateString())
+        ->count();
+
+    return view('relatorio', compact('total', 'porCargo', 'pcdSim', 'pcdNao', 'hoje'));
+}
+
+//FIM RELATORIO DETALHADO
 
 public function validarHashResultado(Request $request)
 {
