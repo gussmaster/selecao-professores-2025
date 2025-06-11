@@ -60,6 +60,7 @@
                     <th>Inscrição</th>
                     <th>Nome</th>
                     <th>CPF</th>
+		    <th>Data de Nascimento</th>
                     <th>Cargo</th>
                     <th>PCD</th>
                     <th>Data</th>
@@ -72,6 +73,7 @@
                         <td>{{ $insc->numero_inscricao }}</td>
                         <td>{{ $insc->nome_completo }}</td>
                         <td>{{ $insc->cpf }}</td>
+			<td>{{ \Carbon\Carbon::parse($insc->data_nascimento)->format('d/m/Y') }}</td>
                         <td>{{ $insc->cargo }}</td>
                         <td>{{ $insc->pcd ? 'Sim' : 'Não' }}</td>
                         <td>{{ \Carbon\Carbon::parse($insc->created_at)->format('d/m/Y H:i') }}</td>

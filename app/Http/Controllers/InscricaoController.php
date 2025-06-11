@@ -180,7 +180,7 @@ public function exportarCSV()
     fprintf($csv, chr(0xEF).chr(0xBB).chr(0xBF));
 
     $header = [
-        'ID', 'Nome Completo', 'CPF', 'E-mail', 'Telefone', 'PCD', 'Descrição PCD',
+        'ID', 'Nome Completo', 'CPF','Data de Nascimento', 'E-mail', 'Telefone', 'PCD', 'Descrição PCD',
         'Cargo', 'Número Inscrição', 'Hash', 'Data'
     ];
 
@@ -191,6 +191,7 @@ public function exportarCSV()
             $i->id,
             $i->nome_completo,
             $i->cpf,
+	    $i->data_nascimento,
             $i->email,
             $i->telefone,
             $i->pcd ? 'Sim' : 'Não',
@@ -269,6 +270,7 @@ public function exportarCSV()
         'cargo' => 'required|string',
         'documentos' => 'required|file|mimes:pdf|max:20480',
         'funcao' => 'required|file|mimes:pdf|max:20480',
+	'data_nascimento' => 'required|date',
     ]);
 
     // Gera número de inscrição
@@ -297,6 +299,8 @@ public function exportarCSV()
         'hash_validacao' => $hash,
         'created_at' => now(),
         'updated_at' => now(),
+	'data_nascimento' => $request->data_nascimento,
+
     ]);
 
     return redirect()->route('comprovante.inscricao', ['id' => $id]);

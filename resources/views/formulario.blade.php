@@ -30,6 +30,11 @@
                 <label class="form-label">Nome Completo:</label>
                 <input type="text" name="nome_completo" class="form-control" required>
             </div>
+	    <div class="mb-3">
+		 <label for="data_nascimento" class="form-label">Data de Nascimento</label>
+		 <input type="date" class="form-control" id="data_nascimento" name="data_nascimento" required>
+	     </div>
+
 
             <div class="mb-3">
                 <label class="form-label">E-mail:</label>
