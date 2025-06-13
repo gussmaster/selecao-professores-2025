@@ -13,6 +13,11 @@ Route::get('/comprovante/{id}', [InscricaoController::class, 'comprovante'])->na
 Route::get('/comprovante/{id}/pdf', [InscricaoController::class, 'gerarPDF'])->name('comprovante.pdf');
 Route::get('/validar', [InscricaoController::class, 'validarHashForm'])->name('validar.form');
 Route::post('/validar', [InscricaoController::class, 'validarHashResultado'])->name('validar.resultado');
+// Exibe formulário para buscar comprovante
+Route::get('/segunda-via', [InscricaoController::class, 'segundaViaForm'])->name('segunda.via.form');
+
+// Processa o CPF e redireciona para comprovante
+Route::post('/segunda-via', [InscricaoController::class, 'segundaViaBuscar'])->name('segunda.via.buscar');
 
 // Autenticação
 Route::get('/login', [InscricaoController::class, 'loginForm'])->name('login');

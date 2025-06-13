@@ -19,7 +19,7 @@
         <img src="{{ asset('/images/logo-sme.png') }}" alt="Logo SME Caucaia" style="max-width: 300px;">
     </div>
     <div class="container mt-5">
-        <h3 class="text-center mb-4">Formulário de Inscrição</h3>
+        <h3 class="text-center mb-4">Formulário de Inscrição - Edital003/2025</h3>
 
         <form action="{{ route('formulario.confirmar') }}" method="POST" enctype="multipart/form-data" class="card p-4 shadow">
             @csrf
@@ -30,6 +30,11 @@
                 <label class="form-label">Nome Completo:</label>
                 <input type="text" name="nome_completo" class="form-control" required>
             </div>
+	    <div class="mb-3">
+                <label class="form-label">Nome Social:</label>
+                <input type="text" name="nome_social" class="form-control" required>
+            </div>
+
 	    <div class="mb-3">
 		 <label for="data_nascimento" class="form-label">Data de Nascimento</label>
 		 <input type="date" class="form-control" id="data_nascimento" name="data_nascimento" required>
@@ -86,7 +91,7 @@
             </div>
 
             <div class="mb-3">
-                <label class="form-label">PDF com Documentos da Função (até 20MB):</label>
+                <label class="form-label">PDF com Documentos da Função e Experiência Profissional (até 20MB):</label>
                 <input type="file" name="funcao" class="form-control" accept=".pdf" required>
             </div>
 

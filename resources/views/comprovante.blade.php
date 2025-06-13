@@ -15,6 +15,7 @@
             <h3 class="mb-3">Comprovante de Inscrição</h3>
 
             <p><strong>Nome:</strong> {{ $inscricao->nome_completo }}</p>
+	    <p><strong>Nome Social:</strong> {{ $inscricao->nome_social }}</p>
             <p><strong>CPF:</strong> {{ $inscricao->cpf }}</p>
             <p><strong>Inscrição nº:</strong> {{ $inscricao->numero_inscricao }}</p>
             <p><strong>Data/Hora:</strong> {{ \Carbon\Carbon::parse($inscricao->created_at)->format('d/m/Y H:i') }}</p>

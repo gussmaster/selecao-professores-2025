@@ -37,6 +37,37 @@ class InscricaoController extends Controller
 
 //fim validacao cpf
 
+//SEGUNDA VIA - FORMULARIO
+
+public function segundaViaForm()
+{
+    return view('segunda-via');
+}
+
+public function segundaViaBuscar(Request $request)
+{
+    $cpf = preg_replace('/\D/', '', $request->input('cpf'));
+    $request->merge(['cpf' => $cpf]);
+    $request->validate([
+	'cpf' => ['required','digits:11','exists:inscricoes,cpf'],
+    ], [
+	'cpf.exists' => 'CPF não encontrado na base de dados.',
+        'cpf.digits' => 'O CPF deve conter exatamente 11 dígitos numéricos.',
+]);
+
+    $inscricao = DB::table('inscricoes')->where('cpf', $cpf)->first();
+
+    if (!$inscricao) {
+        return back()->withErrors(['cpf' => 'CPF não encontrado.'])->withInput();
+    }
+
+    return redirect()->route('comprovante.inscricao', ['id' => $inscricao->id]);
+}
+
+//FIM SEGUNDA VIA - FORMULARIO
+
+
+
 //funcao buscarcpf - pontuação
 
 public function buscarCPF(Request $request)
@@ -263,6 +294,7 @@ public function exportarCSV()
     $request->validate([
         'cpf' => 'required',
         'nome_completo' => 'required|string|max:150',
+	'nome_social' => 'required|string|max:150',
         'email' => 'required|email',
         'telefone' => 'required',
         'pcd' => 'required|in:0,1',
@@ -288,6 +320,7 @@ public function exportarCSV()
     $id = DB::table('inscricoes')->insertGetId([
         'cpf' => $request->cpf,
         'nome_completo' => $request->nome_completo,
+	'nome_social' => $request->nome_social,
         'email' => $request->email,
         'telefone' => $request->telefone,
         'pcd' => $request->pcd,
