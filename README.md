@@ -32,6 +32,17 @@ Este projeto foi desenvolvido pela **Gerência de Tecnologia da Informação da 
 
 O sistema segue os princípios da Lei Geral de Proteção de Dados (LGPD), armazenando informações de forma segura e criptografada.
 
+
+## Comandos Importantes:
+
+dentro da Pasta do Projeto:
+php artisan tinker
+\App\Models\User::create([
+    'name' => 'Nome do Usuário',
+    'email' => 'E-mail do usuário',
+    'password' => bcrypt('senha')
+]);
+
 ---
 
 **Desenvolvido pela Gerência de Tecnologia - SME Caucaia**  
