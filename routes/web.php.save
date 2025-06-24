@@ -14,10 +14,7 @@ Route::get('/comprovante/{id}/pdf', [InscricaoController::class, 'gerarPDF'])->n
 Route::get('/validar', [InscricaoController::class, 'validarHashForm'])->name('validar.form');
 Route::post('/validar', [InscricaoController::class, 'validarHashResultado'])->name('validar.resultado');
 Route::post('/avaliar/{id}', [InscricaoController::class, 'salvarAvaliacao'])->name('avaliar.salvar');
-// Exibir a tela de seleção do cargo e classificação
-//Route::get('/classificacao', [InscricaoController::class, 'classificacao'])->name('classificacao');
-//Route::get('/exportar-classificacao-csv', [InscricaoController::class, 'exportarClassificacaoCSV'])->name('classificacao.export.csv');
-//Route::get('/exportar-classificacao-pdf', [InscricaoController::class, 'exportarClassificacaoPDF'])->name('classificacao.export.pdf');
+
 
 
 

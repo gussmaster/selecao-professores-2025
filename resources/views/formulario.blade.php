@@ -31,10 +31,29 @@
                 <input type="text" name="nome_completo" class="form-control" required>
             </div>
 	    <div class="mb-3">
-                <label class="form-label">Nome Social:</label>
-                <input type="text" name="nome_social" class="form-control" required>
+                <label class="form-label">Você deseja informar Nome Social?</label>
+		<div class="form-check">
+       			 <input type="checkbox" class="form-check-input" id="toggleNomeSocial">
+	                 <label class="form-check-label" for="toggleNomeSocial">Sim, desejo informar</label>
+    		</div>
+               
             </div>
+		<div class="mb-3 d-none" id="campoNomeSocial">
+   			 <label for="nome_social" class="form-label">Nome Social:</label>
+		         <input type="text" name="nome_social" id="nome_social" class="form-control">
+		</div>
 
+		<script>
+		    document.getElementById('toggleNomeSocial').addEventListener('change', function () {
+		        const campo = document.getElementById('campoNomeSocial');
+		        if (this.checked) {
+		            campo.classList.remove('d-none');
+		        } else {
+		            campo.classList.add('d-none');
+		            document.getElementById('nome_social').value = '';
+		        }
+		    });
+		</script>
 	    <div class="mb-3">
 		 <label for="data_nascimento" class="form-label">Data de Nascimento</label>
 		 <input type="date" class="form-control" id="data_nascimento" name="data_nascimento" required>
@@ -86,12 +105,12 @@
             </div>
 
             <div class="mb-3">
-                <label class="form-label">PDF com Documentos Pessoais (até 20MB):</label>
+                <label class="form-label">ARQUIVO 01 (Envio em um único PDF - requisitos)  conforme o item 6.1 do edital:</label>
                 <input type="file" name="documentos" class="form-control" accept=".pdf" required>
             </div>
 
             <div class="mb-3">
-                <label class="form-label">PDF com Documentos da Função e Experiência Profissional (até 20MB):</label>
+                <label class="form-label">ARQUIVO 02 (Envio em um único PDF – análise de títulos) conforme o item 6.1 do edital.</label>
                 <input type="file" name="funcao" class="form-control" accept=".pdf" required>
             </div>
 

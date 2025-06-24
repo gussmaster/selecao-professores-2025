@@ -37,6 +37,42 @@ class InscricaoController extends Controller
 
 //fim validacao cpf
 
+
+//===========FUNÇÃO PARA SALVAR AVALIAÇÃO DO STATUS DO DEFERIMENTO =======/
+
+public function salvarAvaliacao(Request $request, $id)
+{
+    $status = $request->input('status_avaliacao');
+    $motivo = $request->input('motivo_indeferimento');
+    $pontuacao = $request->input('pontuacao');
+
+    $data = [
+        'status_avaliacao' => $status,
+        'motivo_indeferimento' => null,
+        'pontuacao' => null,
+    ];
+
+    if ($status === 'Indeferido') {
+        $data['motivo_indeferimento'] = $motivo;
+    }
+
+    if ($status === 'Deferido') {
+        $data['pontuacao'] = $pontuacao;
+    }
+
+    DB::table('inscricoes')->where('id', $id)->update($data);
+
+    return back()->with('success', 'Avaliação salva com sucesso!');
+}
+
+
+
+//========== FIM DA FUNÇÃO PARA SALVAR AVALIAÇÃO DO STATUS DO DEFERIMENTO====/
+
+
+
+
+
 //SEGUNDA VIA - FORMULARIO
 
 public function segundaViaForm()
@@ -66,6 +102,106 @@ public function segundaViaBuscar(Request $request)
 
 //FIM SEGUNDA VIA - FORMULARIO
 
+
+//===================CORREÇÃO DE  CADASTRO E DOCUMENTOS=============================\\
+
+
+
+
+public function loginCorrigir()
+{
+    session()->forget('corrigir_cpf');
+    return view('corrigir-login');
+}
+
+public function autenticarCorrigir(Request $request)
+{
+    $cpf = preg_replace('/\D/', '', $request->input('cpf'));
+    $senha = $request->input('senha');
+
+    $inscricao = \DB::table('inscricoes')->where('cpf', $cpf)->first();
+
+    if (!$inscricao) {
+        return back()->withErrors(['cpf' => 'CPF não encontrado']);
+    }
+
+    if ($senha !== $inscricao->senha_correcao) {
+        return back()->withErrors(['senha' => 'Senha incorreta']);
+    }
+
+    session(['corrigir_cpf' => $cpf]);
+
+    return redirect()->route('corrigir.formulario');
+}
+
+
+public function formularioCorrigir()
+{
+    $cpf = session('corrigir_cpf');
+
+    if (!$cpf) {
+        return redirect()->route('corrigir.login')->withErrors('Por favor, faça login.');
+    }
+
+    $inscricao = \DB::table('inscricoes')->where('cpf', $cpf)->first();
+
+    if (!$inscricao) {
+        abort(404, 'Inscrição não encontrada.');
+    }
+
+    return view('corrigir-formulario', compact('inscricao'));
+}
+
+public function atualizarCorrigir(Request $request)
+{
+    $cpf = session('corrigir_cpf');
+
+    if (!$cpf) {
+        return redirect()->route('corrigir.login')->withErrors('Por favor, faça login.');
+    }
+
+    $request->validate([
+        'nome_completo' => 'required|string|max:150',
+        'nome_social' => 'nullable|string|max:150',
+        'email' => 'required|email',
+        'telefone' => 'nullable|string',
+        'documento' => 'nullable|file|mimes:pdf|max:20480',
+        'funcao' => 'nullable|file|mimes:pdf|max:20480',
+    ]);
+
+    $dados = [
+        'nome_completo' => $request->input('nome_completo'),
+        'nome_social' => $request->input('nome_social'),
+        'email' => $request->input('email'),
+        'telefone' => $request->input('telefone'),
+    ];
+
+    if ($request->hasFile('documento')) {
+        $arquivo = $request->file('documento');
+        $nomeArquivo = 'documento_' . $cpf . '.' . $arquivo->getClientOriginalExtension();
+        $caminho = $arquivo->storeAs('documentos', $nomeArquivo, 'private');
+        $dados['documentos_path'] = $caminho;
+    }
+
+    if ($request->hasFile('funcao')) {
+        $arquivoFuncao = $request->file('funcao');
+        $nomeArquivoFuncao = 'funcao_' . $cpf . '.' . $arquivoFuncao->getClientOriginalExtension();
+        $caminhoFuncao = $arquivoFuncao->storeAs('funcao', $nomeArquivoFuncao, 'private');
+        $dados['funcao_path'] = $caminhoFuncao;
+    }
+
+    \DB::table('inscricoes')->where('cpf', $cpf)->update($dados);
+
+    return redirect()->route('corrigir.formulario')->with('success', 'Dados atualizados com sucesso!');
+}
+public function logoutCorrigir()
+{
+    session()->forget('corrigir_cpf');
+    return redirect()->route('corrigir.login')->with('success', 'Você saiu com sucesso.');
+}
+
+
+//===================FIM DA FUNÇÃO DE  CADASTRO E DOCUMENTOS=============================\\
 
 
 //funcao buscarcpf - pontuação
@@ -178,6 +314,12 @@ public function painel(Request $request)
     if ($request->filled('pcd')) {
         $query->where('pcd', $request->pcd === 'sim');
     }
+
+    if ($request->filled('cpf')) {
+      $cpf = preg_replace('/\D/', '', $request->cpf); // Remove pontos e traços
+      $query->where('cpf', 'like', '%' . $cpf . '%');
+    }
+
 
     $inscricoes = $query->orderBy('created_at', 'desc')->paginate(15);
 
@@ -294,7 +436,7 @@ public function exportarCSV()
     $request->validate([
         'cpf' => 'required',
         'nome_completo' => 'required|string|max:150',
-	'nome_social' => 'required|string|max:150',
+	'nome_social' => 'nullable|string|max:150',
         'email' => 'required|email',
         'telefone' => 'required',
         'pcd' => 'required|in:0,1',
@@ -311,6 +453,10 @@ public function exportarCSV()
 
     // Gera hash único
     $hash = hash('sha256', $request->cpf . now());
+
+
+    //Senha Correcao
+    $senhaCorrecao = substr($hash, 0, 8);
 
     // Salva os arquivos
     $docPath = $request->file('documentos')->store("documentos", 'private');
@@ -333,6 +479,7 @@ public function exportarCSV()
         'created_at' => now(),
         'updated_at' => now(),
 	'data_nascimento' => $request->data_nascimento,
+	'senha_correcao' => $senhaCorrecao,
 
     ]);
 
