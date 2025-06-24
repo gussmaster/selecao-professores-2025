@@ -1,61 +1,49 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# 🏫 Seleção Simplificada de Professores - SME Caucaia 2025
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+Este repositório contém o sistema web utilizado pela **Secretaria Municipal de Educação de Caucaia (SME Caucaia)** para o processo de **Seleção Simplificada de Professores Temporários - 2025**.
 
-## About Laravel
+## 📋 Funcionalidades
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+- Verificação de CPF para acesso ao formulário de inscrição.
+- Preenchimento e envio online do formulário com upload de documentação.
+- Geração automática de número de inscrição.
+- Emissão de comprovante em PDF.
+- Consulta de 2ª via do comprovante por CPF.
+- Área administrativa com painel de acompanhamento e gestão.
+- Filtros e visualização dos dados dos candidatos.
+- Exportação de dados.
+- Sistema otimizado para acesso em dispositivos móveis.
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+## 🚀 Tecnologias Utilizadas
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+- **Laravel** (PHP)
+- **Bootstrap 5**
+- **MySQL**
+- **JavaScript (jQuery + Mask Plugin)**
+- **Certbot + NGINX (proxy reverso e HTTPS)**
 
-## Learning Laravel
+## 📦 Estrutura
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+O sistema foi projetado para ser leve, seguro e acessível, com backend Laravel rodando atrás de um proxy reverso NGINX com certificado SSL (Let's Encrypt). Cada edital pode ser implantado em uma VM separada, isolando os acessos e garantindo estabilidade.
 
-You may also try the [Laravel Bootcamp](https://bootcamp.laravel.com), where you will be guided through building a modern Laravel application from scratch.
+## 🛡️ Considerações
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+Este projeto foi desenvolvido pela **Gerência de Tecnologia da Informação da SME Caucaia**, com o objetivo de facilitar os processos seletivos e garantir maior transparência e acessibilidade aos candidatos.
 
-## Laravel Sponsors
+O sistema segue os princípios da Lei Geral de Proteção de Dados (LGPD), armazenando informações de forma segura e criptografada.
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
 
-### Premium Partners
+## Comandos Importantes:
 
-- **[Vehikl](https://vehikl.com)**
-- **[Tighten Co.](https://tighten.co)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Redberry](https://redberry.international/laravel-development)**
-- **[Active Logic](https://activelogic.com)**
+dentro da Pasta do Projeto:
+php artisan tinker
+\App\Models\User::create([
+    'name' => 'Nome do Usuário',
+    'email' => 'E-mail do usuário',
+    'password' => bcrypt('senha')
+]);
 
-## Contributing
+---
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
-
-## Code of Conduct
-
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
-
-## Security Vulnerabilities
-
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
-
-## License
-
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+**Desenvolvido pela Gerência de Tecnologia - SME Caucaia**  
+📍 Caucaia - Ceará - Brasil  
