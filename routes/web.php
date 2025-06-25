@@ -61,5 +61,12 @@ Route::prefix('admin')->middleware(['auth'])->group(function () {
     Route::get('/relatorio', [InscricaoController::class, 'relatorio'])->name('relatorio');
     Route::get('/pontuacao', [InscricaoController::class, 'buscarCPF'])->name('pontuacao.buscar');
     Route::post('/pontuacao', [InscricaoController::class, 'salvarPontuacao'])->name('pontuacao.salvar');
+    Route::get('/classificacao', [InscricaoController::class, 'classificacao'])->name('classificacao');
+    Route::get('/classificacao/pdf', [InscricaoController::class, 'classificacaoPdf'])->name('classificacao.pdf');
+    Route::get('/entrevista', [InscricaoController::class, 'formEntrevista'])->name('entrevista.form');
+    Route::post('/entrevista/buscar', [InscricaoController::class, 'buscarEntrevista'])->name('entrevista.buscar');
+    Route::post('/entrevista/salvar', [InscricaoController::class, 'salvarEntrevista'])->name('entrevista.salvar');
+
+
 
 });

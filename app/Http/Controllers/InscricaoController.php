@@ -72,6 +72,139 @@ public function salvarAvaliacao(Request $request, $id)
 
 
 
+// =========== MÉTODO CLASSIFICAÇÃO ======//
+
+
+
+public function classificacao(Request $request)
+{
+    // Lista de cargos distintos cadastrados
+    $cargos = DB::table('inscricoes')
+        ->whereNotNull('cargo')
+        ->select('cargo')
+        ->distinct()
+        ->pluck('cargo');
+
+    $cargoSelecionado = $request->input('cargo');
+
+    $candidatos = collect();
+
+    if ($cargoSelecionado) {
+        $candidatos = DB::table('inscricoes')
+            ->where('cargo', $cargoSelecionado)
+            ->whereNotNull('pontuacao')
+            ->whereNotNull('pontuacao_entrevista')
+            ->select(
+                'nome_completo',
+                'cpf',
+                'pontuacao',
+                'pontuacao_entrevista',
+                'data_nascimento',
+		DB::raw('(pontuacao + pontuacao_entrevista) as nota_final')
+            )
+            ->orderByDesc(DB::raw('pontuacao + pontuacao_entrevista')) // Nota final decrescente
+            ->orderBy('data_nascimento') // Mais velho primeiro
+            ->paginate(100); // Paginação: 100 por página
+    }
+
+    return view('classificacao', compact('cargos', 'candidatos', 'cargoSelecionado'));
+}
+
+
+public function classificacaoPdf(Request $request)
+{
+    $cargo = $request->input('cargo');
+    $candidatos = $this->getCandidatosClassificados($cargo);
+
+    $pdf = Pdf::loadView('classificacao-pdf', [
+        'cargo' => $cargo,
+        'candidatos' => $candidatos
+    ])->setPaper('a4', 'portrait');
+
+    return $pdf->download("classificacao_{$cargo}.pdf");
+}
+
+private function getCandidatosClassificados($cargo)
+{
+    $candidatos = DB::table('inscricoes')
+        ->where('cargo', $cargo)
+        ->whereNotNull('pontuacao')
+        ->whereNotNull('pontuacao_entrevista')
+        ->select(
+            'nome_completo',
+            'cpf',
+            'pontuacao',
+            'pontuacao_entrevista',
+            'data_nascimento'
+        )
+        ->get()
+        ->map(function ($c) {
+            $c->nota_final = ($c->pontuacao ?? 0) + ($c->pontuacao_entrevista ?? 0);
+            return $c;
+        })
+        ->sort(function ($a, $b) {
+            if ($a->nota_final != $b->nota_final) {
+                return $b->nota_final <=> $a->nota_final;
+            }
+            return strtotime($a->data_nascimento) <=> strtotime($b->data_nascimento);
+        })->values();
+
+    return $candidatos;
+}
+
+
+// ============ FIM DO MÉTODO DE CLASSIFICAÇÃO ======/
+
+// ========== ENTREVISTA =========/
+
+// Formulário de CPF
+public function formEntrevista()
+{
+    return view('entrevista-form');
+}
+
+// Buscar candidato pelo CPF
+public function buscarEntrevista(Request $request)
+{
+    $cpf = $request->input('cpf');
+
+    $candidato = DB::table('inscricoes')->where('cpf', $cpf)->first();
+
+    if (!$candidato) {
+        return back()->with('erro', 'CPF não encontrado.');
+    }
+
+    return view('entrevista-lancar', compact('candidato'));
+}
+
+// Salvar nota da entrevista
+public function salvarEntrevista(Request $request)
+{
+    $cpf = $request->input('cpf');
+    $nota = $request->input('pontuacao_entrevista');
+
+    DB::table('inscricoes')
+        ->where('cpf', $cpf)
+        ->update(['pontuacao_entrevista' => $nota]);
+
+    return redirect()->route('entrevista.form')->with('sucesso', 'Nota da entrevista salva com sucesso!');
+}
+
+
+
+
+
+
+
+//=============FIM ENTREVISTA =========/
+
+
+
+
+
+
+
+
 
 //SEGUNDA VIA - FORMULARIO
 
@@ -354,7 +487,7 @@ public function exportarCSV()
 
     $header = [
         'ID', 'Nome Completo', 'CPF','Data de Nascimento', 'E-mail', 'Telefone', 'PCD', 'Descrição PCD',
-        'Cargo', 'Número Inscrição', 'Hash', 'Data'
+        'Cargo', 'Número Inscrição', 'Hash', 'Pontuacao', 'Pontuação Entrevista', 'Status do Deferimento', 'Motivo do Indeferimento','Data'
     ];
 
     fputcsv($csv, $header);
@@ -372,6 +505,10 @@ public function exportarCSV()
             $i->cargo,
             $i->numero_inscricao,
             $i->hash_validacao,
+	    $i->pontuacao,
+	    $i->pontuacao_entrevista,
+	    $i->status_avaliacao,
+	    $i->motivo_indeferimento,
             \Carbon\Carbon::parse($i->created_at)->format('d/m/Y H:i'),
         ]);
     }
