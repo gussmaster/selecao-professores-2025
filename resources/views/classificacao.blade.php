@@ -28,9 +28,26 @@
 
     @if($cargoSelecionado && count($candidatos) > 0)
         <div class="mb-3">
+	   <a href="{{ route('classificacao.final.export.csv') }}" class="btn btn-secondary" target="_blank">
+		    Exportar CSV Final
+	</a>
+
             <a href="{{ route('classificacao.pdf', ['cargo' => $cargoSelecionado]) }}" class="btn btn-danger">
                 Exportar PDF
             </a>
+	   <a href="{{ route('exportar.classificados.seguro.pdf', request()->query()) }}" class="btn btn-outline-danger">
+             <i class="bi bi-shield-lock"></i> Exportar Classificados - Seguro PDF
+           </a>
+	  <a href="{{ route('exportar.entrevista.seguro.pdf', request()->query()) }}" class="btn btn-outline-primary">
+             <i class="bi bi-file-earmark-pdf"></i> Exportar Entrevista - Seguro PDF
+           </a>
+
+	  <a href="{{ route('classificacao.desempate') }}" class="btn btn-primary">
+            Resolver Empates e Gerar Relatório Final
+           </a>
+
+
+
         </div>
         <div class="table-responsive">
         <table class="table table-bordered table-striped mt-4">
